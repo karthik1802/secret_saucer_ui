@@ -30,6 +30,13 @@ export function BookingForm({
   const [qty, setQty] = useState(1);
   const [guests, setGuests] = useState<GuestDetails[]>([emptyGuest()]);
 
+  // Track if user has manually edited guest 1 fields
+  const [guest1Edited, setGuest1Edited] = useState({
+    name: false,
+    email: false,
+    phone: false,
+  });
+
   // Sync guest count with qty
   useEffect(() => {
     setGuests((prev) => {
@@ -48,25 +55,26 @@ export function BookingForm({
     });
   }, [qty]);
 
-  // Pre-fill first guest from buyer details
+  // Pre-fill first guest from buyer details (only fields not manually edited)
   useEffect(() => {
     if (guests.length > 0) {
-      const firstGuest = guests[0];
-      if (!firstGuest.name && !firstGuest.email && !firstGuest.phone) {
-        setGuests((prev) => {
-          const newGuests = [...prev];
-          newGuests[0] = {
-            name: buyerName,
-            email: buyerEmail,
-            phone: buyerPhone,
-          };
-          return newGuests;
-        });
-      }
+      setGuests((prev) => {
+        const newGuests = [...prev];
+        newGuests[0] = {
+          name: guest1Edited.name ? prev[0].name : buyerName,
+          email: guest1Edited.email ? prev[0].email : buyerEmail,
+          phone: guest1Edited.phone ? prev[0].phone : buyerPhone,
+        };
+        return newGuests;
+      });
     }
-  }, [buyerName, buyerEmail, buyerPhone, guests]);
+  }, [buyerName, buyerEmail, buyerPhone, guest1Edited]);
 
   const updateGuest = (index: number, field: keyof GuestDetails, value: string) => {
+    // If editing guest 1, mark that field as manually edited
+    if (index === 0) {
+      setGuest1Edited((prev) => ({ ...prev, [field]: true }));
+    }
     setGuests((prev) => {
       const newGuests = [...prev];
       newGuests[index] = { ...newGuests[index], [field]: value };
