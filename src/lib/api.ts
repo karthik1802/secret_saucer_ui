@@ -155,70 +155,43 @@ export async function fetchEvents(): Promise<Event[]> {
 
 /**
  * Create a Razorpay order and pre-save booking
- * Uses POST with form data to avoid CORS preflight issues
  */
 export async function createOrder(params: CreateOrderParams): Promise<CreateOrderResponse> {
   if (USE_MOCK) {
     return mockCreateOrder(params);
   }
   
-  // Build form data
-  const formData = new URLSearchParams();
-  formData.append('action', 'createOrder');
-  formData.append('event_id', params.event_id);
-  formData.append('qty', params.qty.toString());
-  formData.append('buyer_name', params.buyer_name);
-  formData.append('buyer_email', params.buyer_email);
-  formData.append('buyer_phone', params.buyer_phone);
+  // Convert params to query string
+  const queryParams = new URLSearchParams();
+  
+  queryParams.append('action', 'createOrder');
+  queryParams.append('event_id', params.event_id);
+  queryParams.append('qty', params.qty.toString());
+  queryParams.append('buyer_name', params.buyer_name);
+  queryParams.append('buyer_email', params.buyer_email);
+  queryParams.append('buyer_phone', params.buyer_phone);
   
   // Add guest details
   Object.keys(params).forEach((key) => {
     if (key.startsWith('guest')) {
-      formData.append(key, params[key].toString());
+      queryParams.append(key, params[key].toString());
     }
   });
-
+  
+  const res = await callAppsScript(`${WEBAPP_URL}?${queryParams.toString()}`);
+  
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`);
+  }
+  
+  // Get response text first to handle potential non-JSON responses
+  const text = await res.text();
+  
   try {
-    // Use POST with form data - this is a "simple request" that avoids CORS preflight
-    const res = await fetch(WEBAPP_URL, {
-      method: 'POST',
-      redirect: 'follow',
-      body: formData,
-      // Content-Type is automatically set to application/x-www-form-urlencoded for URLSearchParams
-    });
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    
-    // Get response text first to handle potential non-JSON responses
-    const text = await res.text();
-    
-    try {
-      return JSON.parse(text);
-    } catch (parseError) {
-      console.error('Failed to parse response:', text.slice(0, 500));
-      throw new Error('Invalid JSON response from server. Check Apps Script configuration.');
-    }
-  } catch (error) {
-    console.error('CreateOrder error:', error);
-    
-    // If POST fails, try GET as fallback (in case Apps Script only has doGet)
-    console.log('Trying GET fallback...');
-    const res = await callAppsScript(`${WEBAPP_URL}?${formData.toString()}`);
-    
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    
-    const text = await res.text();
-    
-    try {
-      return JSON.parse(text);
-    } catch (parseError) {
-      console.error('Failed to parse response:', text.slice(0, 500));
-      throw new Error('Network error creating order. Please check your Apps Script configuration.');
-    }
+    return JSON.parse(text);
+  } catch (parseError) {
+    console.error('Failed to parse response:', text.slice(0, 500));
+    throw new Error('Invalid JSON response from server. Check Apps Script configuration.');
   }
 }
 
