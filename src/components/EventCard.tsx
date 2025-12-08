@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Event } from '../types';
-import { formatDate, formatTime, formatPrice } from '../lib/api';
+import { formatDate, formatPrice } from '../lib/api';
 
 interface EventCardProps {
   event: Event;
@@ -43,8 +43,6 @@ export function EventCard({ event, index }: EventCardProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <span>{formatDate(event.date_iso)}</span>
-          <span className="opacity-50">•</span>
-          <span>{formatTime(event.date_iso)}</span>
         </div>
 
         {/* Venue */}
