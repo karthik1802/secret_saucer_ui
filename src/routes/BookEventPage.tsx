@@ -6,6 +6,7 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { fetchEvents, createOrder, formatDate, formatTime, formatPrice } from '../lib/api';
 import { openRazorpayCheckout } from '../lib/razorpay';
 import type { Event, BookingFormData, CreateOrderParams } from '../types';
+import logo from '../assets/logo.png';
 
 export function BookEventPage() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -134,13 +135,16 @@ export function BookEventPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link 
             to="/" 
-            className="flex items-center gap-2 text-sm transition-colors hover:text-[var(--color-accent)]"
+            className="flex items-center gap-3 text-sm transition-colors hover:text-[var(--color-accent)]"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to events
+            <img src={logo} alt="Secret Saucer" className="w-10 h-10" />
+            <span className="flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to events
+            </span>
           </Link>
           
           <span 

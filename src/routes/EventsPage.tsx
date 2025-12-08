@@ -4,6 +4,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { fetchEvents } from '../lib/api';
 import type { Event } from '../types';
+import logo from '../assets/logo.png';
 
 export function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -41,6 +42,12 @@ export function EventsPage() {
         />
         
         <div className="relative z-10 max-w-3xl mx-auto">
+          <img 
+            src={logo} 
+            alt="Secret Saucer Supper Club" 
+            className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-6 drop-shadow-lg"
+          />
+          
           <p 
             className="text-xs uppercase tracking-[0.3em] mb-4"
             style={{ color: 'var(--color-accent)' }}
