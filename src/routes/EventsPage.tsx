@@ -87,7 +87,7 @@ export function EventsPage() {
               className="text-2xl"
               style={{ fontFamily: 'var(--font-display)' }}
             >
-              Upcoming Events
+              
             </h2>
             <div 
               className="flex-1 h-px"
@@ -109,7 +109,7 @@ export function EventsPage() {
           ) : events.length === 0 ? (
             <div className="py-20 text-center">
               <p style={{ color: 'var(--color-text-secondary)' }}>
-                No upcoming events at the moment. Check back soon!
+                Check back soon!
               </p>
             </div>
           ) : (
